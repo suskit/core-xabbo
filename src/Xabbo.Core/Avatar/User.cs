@@ -30,6 +30,17 @@ public class User(Id id, int index) : Avatar(AvatarType.User, id, index), IUser
         FigureExtra = p.ReadString();
         AchievementScore = p.ReadInt();
         IsStaff = p.ReadBool();
+        if (p.Client is ClientType.Unity)
+        {
+            p.ReadString();
+            p.ReadString();
+            int unityBadgeCount = p.ReadShort();
+            for (int i = 0; i < unityBadgeCount; i++)
+            {
+                p.ReadInt();
+                p.ReadLong();
+            }
+        }
     }
 
     protected override void OnUpdate(AvatarStatus update) { }

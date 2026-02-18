@@ -36,6 +36,17 @@ public class RoomUser : Entity, IRoomUser
         FigureExtra = packet.ReadString();
         AchievementScore = packet.ReadInt();
         IsModerator = packet.ReadBool();
+        if (packet.Protocol == ClientType.Unity)
+        {
+            packet.ReadString();
+            packet.ReadString();
+            var unityBadgeCount = packet.ReadShort();
+            for (var i = 0; i < unityBadgeCount; i++)
+            {
+                packet.ReadInt();
+                packet.ReadLegacyLong();
+            }
+        }
     }
 
     protected override void OnUpdate(EntityStatusUpdate update) { }

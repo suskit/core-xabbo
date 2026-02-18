@@ -23,10 +23,13 @@ public sealed record AvatarRemovedMsg(int Index) : IMessage<AvatarRemovedMsg>
 
     static AvatarRemovedMsg IParser<AvatarRemovedMsg>.Parse(in PacketReader p)
     {
+        if (p.Client is ClientType.Unity)
+            return new(p.ReadInt());
+
         string strId = p.Client switch
         {
             ClientType.Shockwave => p.ReadContent(),
-            not ClientType.Shockwave => p.ReadString(),
+            _ => p.ReadString(),
         };
 
         if (!int.TryParse(strId, out int index))

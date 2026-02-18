@@ -46,7 +46,20 @@ public readonly struct Tile(int x, int y, float z) : IParserComposer<Tile>
         p.WriteFloat(Z);
     }
 
-    static Tile IParser<Tile>.Parse(in PacketReader p) => new(p.ReadInt(), p.ReadInt(), p.ReadFloat());
+    static Tile IParser<Tile>.Parse(in PacketReader p)
+    {
+        int x = p.ReadInt();
+        int y = p.ReadInt();
+        float z;
+        if (p.Client is ClientType.Unity or ClientType.Flash or ClientType.Shockwave)
+        {
+            var zStr = p.ReadString();
+            if (!float.TryParse(zStr, System.Globalization.NumberStyles.Float,
+                System.Globalization.CultureInfo.InvariantCulture, out z)) z = 0f;
+        }
+        else z = p.ReadFloat();
+        return new(x, y, z);
+    }
 
     public static bool TryParseString(string format, out Tile tile)
     {

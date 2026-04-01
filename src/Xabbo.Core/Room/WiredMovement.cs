@@ -87,6 +87,7 @@ public class AvatarWiredMovement : WiredMovement
         AnimationTime = p.ReadInt();
         BodyDirection = p.ReadInt();
         HeadDirection = p.ReadInt();
+        p.ReadBool();
     }
 
     protected override void Compose(in PacketWriter p)
@@ -103,6 +104,7 @@ public class AvatarWiredMovement : WiredMovement
         p.WriteInt(AnimationTime);
         p.WriteInt(BodyDirection);
         p.WriteInt(HeadDirection);
+        p.WriteBool(false);
     }
 }
 
@@ -131,6 +133,7 @@ public class FloorItemWiredMovement : WiredMovement
         ItemId = p.ReadId();
         AnimationTime = p.ReadInt();
         Rotation = p.ReadInt();
+        p.ReadString();
     }
 
     protected override void Compose(in PacketWriter p)
@@ -145,6 +148,7 @@ public class FloorItemWiredMovement : WiredMovement
         p.WriteId(ItemId);
         p.WriteInt(AnimationTime);
         p.WriteInt(Rotation);
+        p.WriteString("");
     }
 }
 

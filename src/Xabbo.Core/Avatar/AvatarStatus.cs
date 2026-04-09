@@ -206,7 +206,7 @@ public class AvatarStatus : IAvatarStatus, IReadOnlyDictionary<string, IReadOnly
         Location = p.Parse<Tile>();
         HeadDirection = p.ReadInt();
         Direction = p.ReadInt();
-        if (p.Client is not ClientType.Shockwave)
+        if (p.Client is ClientType.Flash)
             p.ReadInt();
 
         ParseStatus(p.ReadString());
@@ -218,7 +218,7 @@ public class AvatarStatus : IAvatarStatus, IReadOnlyDictionary<string, IReadOnly
         p.Compose(Location);
         p.WriteInt(HeadDirection);
         p.WriteInt(Direction);
-        if (p.Client is not ClientType.Shockwave)
+        if (p.Client is ClientType.Flash)
             p.WriteInt(0);
         p.WriteString(CompileStatus());
     }

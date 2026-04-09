@@ -21,13 +21,8 @@ public class InventoryItem : IInventoryItem
     public int SecondsToExpiration { get; set; }
     public bool HasRentPeriodStarted { get; set; }
     public long RoomId { get; set; }
-    public short _Short1 { get; set; }
     public string SlotId { get; set; } = string.Empty;
-    public int _Int3 { get; set; }
-
-    public string _String3 { get; set; } = string.Empty;
     public long Extra { get; set; }
-    public int _Int5 { get; set; }
 
     public bool IsFloorItem => Type == ItemType.Floor;
     public bool IsWallItem => Type == ItemType.Wall;
@@ -77,10 +72,9 @@ public class InventoryItem : IInventoryItem
 
         if (packet.Protocol == ClientType.Unity)
         {
-            // - Seems to be consistent
-            _Short1 = packet.ReadShort(); // ?
-            SlotId = packet.ReadString(); // string "r" / "s"
-            _Int3 = packet.ReadInt(); // int 1187551480
+            packet.ReadShort(); // ?
+            packet.ReadString(); // string "r" / "s"
+            packet.ReadInt();
         }
 
         if (Type == ItemType.Floor)
@@ -92,15 +86,14 @@ public class InventoryItem : IInventoryItem
             }
             else
             {
-                // 10 bytes ?
-                _String3 = packet.ReadString();
-                Extra = packet.ReadInt();
-                _Int5 = packet.ReadInt();
+                SlotId = packet.ReadString();
+                Extra = packet.ReadLong();
             }
         }
-        else
+
+        if (packet.Protocol == ClientType.Unity)
         {
-            _String3 = string.Empty;
+            packet.ReadBool();
         }
 
         /*if (clientType == ClientType.Flash)
@@ -189,9 +182,9 @@ public class InventoryItem : IInventoryItem
         if (packet.Protocol == ClientType.Unity)
         {
             packet
-                .WriteShort(_Short1)
-                .WriteString(SlotId)
-                .WriteInt(_Int3);
+                .WriteShort(0)
+                .WriteString(string.Empty)
+                .WriteInt(0);
         }
 
         if (Type == ItemType.Floor)
@@ -204,12 +197,15 @@ public class InventoryItem : IInventoryItem
             }
             else
             {
-                // 10 bytes ?
                 packet
-                    .WriteString(_String3)
-                    .WriteLegacyLong(Extra)
-                    .WriteInt(_Int5);
+                    .WriteString(SlotId)
+                    .WriteLong(Extra);
             }
+        }
+
+        if (packet.Protocol == ClientType.Unity)
+        {
+            packet.WriteBool(false);
         }
     }
 

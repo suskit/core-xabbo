@@ -218,6 +218,7 @@ public class EntityStatusUpdate : IEntityStatusUpdate, IReadOnlyDictionary<strin
         Location = Tile.Parse(packet);
         HeadDirection = packet.ReadInt();
         Direction = packet.ReadInt();
+        packet.ReadInt();
 
         ParseStatus(packet.ReadString());
     }
@@ -229,6 +230,7 @@ public class EntityStatusUpdate : IEntityStatusUpdate, IReadOnlyDictionary<strin
             .Write(Location)
             .WriteInt(HeadDirection)
             .WriteInt(Direction)
+            .WriteInt(0)
             .WriteString(CompileStatus());
     }
 

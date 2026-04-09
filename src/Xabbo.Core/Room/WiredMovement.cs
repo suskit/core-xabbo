@@ -82,6 +82,7 @@ public class UserWiredMovement : WiredMovement
         AnimationTime = packet.ReadInt();
         BodyDirection = packet.ReadInt();
         HeadDirection = packet.ReadInt();
+        packet.ReadBool();
     }
 
     public override void Compose(IPacket packet)
@@ -98,7 +99,8 @@ public class UserWiredMovement : WiredMovement
             .WriteInt(Slide ? 1 : 0)
             .WriteInt(AnimationTime)
             .WriteInt(BodyDirection)
-            .WriteInt(HeadDirection);
+            .WriteInt(HeadDirection)
+            .WriteBool(false);
     }
 }
 
@@ -124,6 +126,7 @@ public class FloorItemWiredMovement : WiredMovement
         FurniId = packet.ReadLegacyLong();
         AnimationTime = packet.ReadInt();
         Rotation = packet.ReadInt();
+        packet.ReadString();
     }
 
     public override void Compose(IPacket packet)
@@ -138,7 +141,8 @@ public class FloorItemWiredMovement : WiredMovement
             .WriteFloatAsString(Destination.Z)
             .WriteLegacyLong(FurniId)
             .WriteInt(AnimationTime)
-            .WriteInt(Rotation);
+            .WriteInt(Rotation)
+            .WriteString("");
     }
 }
 

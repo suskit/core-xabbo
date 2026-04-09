@@ -218,7 +218,8 @@ public class EntityStatusUpdate : IEntityStatusUpdate, IReadOnlyDictionary<strin
         Location = Tile.Parse(packet);
         HeadDirection = packet.ReadInt();
         Direction = packet.ReadInt();
-        packet.ReadInt();
+        if (packet.Protocol == ClientType.Flash)
+            packet.ReadInt();
 
         ParseStatus(packet.ReadString());
     }
@@ -229,9 +230,12 @@ public class EntityStatusUpdate : IEntityStatusUpdate, IReadOnlyDictionary<strin
             .WriteInt(Index)
             .Write(Location)
             .WriteInt(HeadDirection)
-            .WriteInt(Direction)
-            .WriteInt(0)
-            .WriteString(CompileStatus());
+            .WriteInt(Direction);
+
+        if (packet.Protocol == ClientType.Flash)
+            packet.WriteInt(0);
+
+        packet.WriteString(CompileStatus());
     }
 
     private void ParseStatus(string status)

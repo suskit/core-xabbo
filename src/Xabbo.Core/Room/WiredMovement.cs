@@ -82,7 +82,8 @@ public class UserWiredMovement : WiredMovement
         AnimationTime = packet.ReadInt();
         BodyDirection = packet.ReadInt();
         HeadDirection = packet.ReadInt();
-        packet.ReadBool();
+        if (packet.Protocol == ClientType.Flash)
+            packet.ReadBool();
     }
 
     public override void Compose(IPacket packet)
@@ -99,8 +100,10 @@ public class UserWiredMovement : WiredMovement
             .WriteInt(Slide ? 1 : 0)
             .WriteInt(AnimationTime)
             .WriteInt(BodyDirection)
-            .WriteInt(HeadDirection)
-            .WriteBool(false);
+            .WriteInt(HeadDirection);
+
+        if (packet.Protocol == ClientType.Flash)
+            packet.WriteBool(false);
     }
 }
 
@@ -126,7 +129,8 @@ public class FloorItemWiredMovement : WiredMovement
         FurniId = packet.ReadLegacyLong();
         AnimationTime = packet.ReadInt();
         Rotation = packet.ReadInt();
-        packet.ReadString();
+        if (packet.Protocol == ClientType.Flash)
+            packet.ReadString();
     }
 
     public override void Compose(IPacket packet)
@@ -141,8 +145,10 @@ public class FloorItemWiredMovement : WiredMovement
             .WriteFloatAsString(Destination.Z)
             .WriteLegacyLong(FurniId)
             .WriteInt(AnimationTime)
-            .WriteInt(Rotation)
-            .WriteString("");
+            .WriteInt(Rotation);
+
+        if (packet.Protocol == ClientType.Flash)
+            packet.WriteString("");
     }
 }
 

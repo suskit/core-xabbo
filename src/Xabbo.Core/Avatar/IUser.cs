@@ -34,6 +34,9 @@ public interface IUser : IAvatar
     /// </summary>
     bool IsStaff { get; }
 
+    // unknown
+    int Unknown1 { get; }
+
     /// <summary>
     /// The rights level of the user in the room.
     /// </summary>

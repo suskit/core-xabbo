@@ -30,6 +30,8 @@ public class User(Id id, int index) : Avatar(AvatarType.User, id, index), IUser
         FigureExtra = p.ReadString();
         AchievementScore = p.ReadInt();
         IsStaff = p.ReadBool();
+        if (p.Client is ClientType.Flash)
+            p.ReadInt();
         if (p.Client is ClientType.Unity)
         {
             p.ReadString();

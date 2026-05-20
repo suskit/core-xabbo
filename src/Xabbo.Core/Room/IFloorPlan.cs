@@ -28,6 +28,12 @@ public interface IFloorPlan
     int Length { get; }
 
     /// <summary>
+    /// Gets the size of this floor plan as a <see cref="Point"/>,
+    /// where <c>X</c> is the width and <c>Y</c> is the length.
+    /// </summary>
+    Point Size => new(Width, Length);
+
+    /// <summary>
     /// Gets the tile height at the specified coordinates.
     /// </summary>
     int this[int x, int y] { get; }

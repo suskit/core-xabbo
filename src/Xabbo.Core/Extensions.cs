@@ -37,6 +37,11 @@ public static class Extensions
         IsInitialized = furniData is not null && texts is not null;
     }
 
+    /// <summary>
+    /// Initializes xabbo core extensions from the specified game data manager.
+    /// </summary>
+    public static void Initialize(IGameDataManager gameData) => Initialize(gameData.Furni, gameData.Texts);
+
     #region - Texts -
     /// <summary>
     /// Attempts to get a poster name by its variant from the external texts.

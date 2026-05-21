@@ -19,6 +19,7 @@ public class AvatarStatus : IAvatarStatus, IReadOnlyDictionary<string, IReadOnly
     public Tile Location { get; set; }
     public int HeadDirection { get; set; }
     public int Direction { get; set; }
+    public int JumpingPower { get; set; }
 
     // sit, lay
     public AvatarStance Stance
@@ -188,6 +189,7 @@ public class AvatarStatus : IAvatarStatus, IReadOnlyDictionary<string, IReadOnly
         Location = default;
         HeadDirection = 0;
         Direction = 0;
+        JumpingPower = 0;
     }
 
     public AvatarStatus(IAvatarStatus original)
@@ -196,6 +198,7 @@ public class AvatarStatus : IAvatarStatus, IReadOnlyDictionary<string, IReadOnly
         Location = original.Location;
         HeadDirection = original.HeadDirection;
         Direction = original.Direction;
+        JumpingPower = original.JumpingPower;
         ParseStatus(original.ToString() ?? "");
     }
 
@@ -206,7 +209,7 @@ public class AvatarStatus : IAvatarStatus, IReadOnlyDictionary<string, IReadOnly
         HeadDirection = p.ReadInt();
         Direction = p.ReadInt();
         if (p.Client is ClientType.Flash)
-            p.ReadInt();
+            JumpingPower = p.ReadInt();
 
         ParseStatus(p.ReadString());
     }
@@ -218,7 +221,7 @@ public class AvatarStatus : IAvatarStatus, IReadOnlyDictionary<string, IReadOnly
         p.WriteInt(HeadDirection);
         p.WriteInt(Direction);
         if (p.Client is ClientType.Flash)
-            p.WriteInt(0);
+            p.WriteInt(JumpingPower);
         p.WriteString(CompileStatus());
     }
 

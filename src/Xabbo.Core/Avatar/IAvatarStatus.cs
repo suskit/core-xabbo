@@ -26,6 +26,11 @@ public interface IAvatarStatus
     int Direction { get; }
 
     /// <summary>
+    /// The power of the avatar's jump.
+    /// </summary>
+    int JumpingPower { get; }
+
+    /// <summary>
     /// The stance of the avatar.
     /// </summary>
     AvatarStance Stance { get; }

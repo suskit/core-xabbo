@@ -19,7 +19,11 @@ public enum WiredMovementType
     /// <summary>
     /// Used when a wall item is moved by wired.
     /// </summary>
-    WallItem = 2
+    WallItem = 2,
+    /// <summary>
+    /// Used when a user's direction is changed by wired.
+    /// </summary>
+    UserDirection = 3
 }
 
 /// <summary>
@@ -48,6 +52,7 @@ public abstract class WiredMovement : IComposable
             WiredMovementType.User => new UserWiredMovement(packet),
             WiredMovementType.FloorItem => new FloorItemWiredMovement(packet),
             WiredMovementType.WallItem => new WallItemWiredMovement(packet),
+            WiredMovementType.UserDirection => new UserDirectionWiredMovement(packet),
             _ => throw new Exception($"Unknown wired movement type: {type}"),
         };
     }
@@ -64,6 +69,8 @@ public class UserWiredMovement : WiredMovement
     public bool Slide { get; set; }
     public int BodyDirection { get; set; }
     public int HeadDirection { get; set; }
+    public bool HasJump { get; set; }
+    public int JumpPower { get; set; }
 
     public UserWiredMovement() : base(WiredMovementType.User) { }
 
@@ -83,7 +90,11 @@ public class UserWiredMovement : WiredMovement
         BodyDirection = packet.ReadInt();
         HeadDirection = packet.ReadInt();
         if (packet.Protocol == ClientType.Flash)
-            packet.ReadBool();
+        {
+            HasJump = packet.ReadBool();
+            if (HasJump)
+                JumpPower = packet.ReadInt();
+        }
     }
 
     public override void Compose(IPacket packet)
@@ -103,7 +114,11 @@ public class UserWiredMovement : WiredMovement
             .WriteInt(HeadDirection);
 
         if (packet.Protocol == ClientType.Flash)
-            packet.WriteBool(false);
+        {
+            packet.WriteBool(HasJump);
+            if (HasJump)
+                packet.WriteInt(JumpPower);
+        }
     }
 }
 
@@ -113,6 +128,10 @@ public class FloorItemWiredMovement : WiredMovement
     public Tile Destination { get; set; }
     public long FurniId { get; set; }
     public int Rotation { get; set; }
+    public bool HasOvershoot { get; set; }
+    public int OvershootDistance { get; set; }
+    public bool HasCurve { get; set; }
+    public int CurveStrength { get; set; }
 
     public FloorItemWiredMovement() : base(WiredMovementType.FloorItem) { }
 
@@ -130,7 +149,17 @@ public class FloorItemWiredMovement : WiredMovement
         AnimationTime = packet.ReadInt();
         Rotation = packet.ReadInt();
         if (packet.Protocol == ClientType.Flash)
-            packet.ReadString();
+        {
+            HasOvershoot = packet.ReadBool();
+
+            if (HasOvershoot)
+                OvershootDistance = packet.ReadInt();
+
+            HasCurve = packet.ReadBool();
+
+            if (HasCurve)
+                CurveStrength = packet.ReadInt();
+        }
     }
 
     public override void Compose(IPacket packet)
@@ -148,7 +177,17 @@ public class FloorItemWiredMovement : WiredMovement
             .WriteInt(Rotation);
 
         if (packet.Protocol == ClientType.Flash)
-            packet.WriteString("");
+        {
+            packet.WriteBool(HasOvershoot);
+
+            if (HasOvershoot)
+                packet.WriteInt(OvershootDistance);
+
+            packet.WriteBool(HasCurve);
+
+            if (HasCurve)
+                packet.WriteInt(CurveStrength);
+        }
     }
 }
 
@@ -192,5 +231,30 @@ public class WallItemWiredMovement : WiredMovement
             .WriteInt(Destination.LX)
             .WriteInt(Destination.LY)
             .WriteInt(AnimationTime);
+    }
+}
+
+public class UserDirectionWiredMovement : WiredMovement
+{
+    public int UserIndex { get; set; }
+    public int BodyDirection { get; set; }
+    public int HeadDirection { get; set; }
+
+    public UserDirectionWiredMovement() : base(WiredMovementType.UserDirection) { }
+
+    internal UserDirectionWiredMovement(IReadOnlyPacket packet) : this()
+    {
+        UserIndex = packet.ReadInt();
+        BodyDirection = packet.ReadInt();
+        HeadDirection = packet.ReadInt();
+    }
+
+    public override void Compose(IPacket packet)
+    {
+        base.Compose(packet);
+        packet
+            .WriteInt(UserIndex)
+            .WriteInt(BodyDirection)
+            .WriteInt(HeadDirection);
     }
 }

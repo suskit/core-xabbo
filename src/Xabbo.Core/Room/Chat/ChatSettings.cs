@@ -23,18 +23,10 @@ public class ChatSettings : IChatSettings, IComposable
 
     internal ChatSettings(IReadOnlyPacket packet)
     {
-        Flow = (ChatFlow)packet.ReadInt();
-        BubbleWidth = (ChatBubbleWidth)packet.ReadInt();
-        ScrollSpeed = (ChatScrollSpeed)packet.ReadInt();
-        TalkHearingDistance = packet.ReadInt();
         FloodProtection = (ChatFloodProtection)packet.ReadInt();
     }
 
     public void Compose(IPacket packet) => packet
-        .WriteInt((int)Flow)
-        .WriteInt((int)BubbleWidth)
-        .WriteInt((int)ScrollSpeed)
-        .WriteInt(TalkHearingDistance)
         .WriteInt((int)FloodProtection);
 
     public static ChatSettings Parse(IReadOnlyPacket packet)

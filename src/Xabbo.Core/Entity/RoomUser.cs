@@ -13,6 +13,7 @@ public class RoomUser : Entity, IRoomUser
     public string FigureExtra { get; set; }
     public int AchievementScore { get; set; }
     public bool IsModerator { get; set; }
+    public int BadgeRank { get; set; } = -1;
 
     public int RightsLevel => CurrentUpdate?.ControlLevel ?? 0;
     public bool HasRights => RightsLevel > 0;
@@ -36,6 +37,8 @@ public class RoomUser : Entity, IRoomUser
         FigureExtra = packet.ReadString();
         AchievementScore = packet.ReadInt();
         IsModerator = packet.ReadBool();
+        if (packet.Protocol == ClientType.Flash)
+            BadgeRank = packet.ReadInt();
         if (packet.Protocol == ClientType.Unity)
         {
             packet.ReadString();
@@ -63,5 +66,8 @@ public class RoomUser : Entity, IRoomUser
             .WriteString(FigureExtra)
             .WriteInt(AchievementScore)
             .WriteBool(IsModerator);
+
+        if (packet.Protocol == ClientType.Flash)
+            packet.WriteInt(BadgeRank);
     }
 }
